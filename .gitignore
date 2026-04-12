@@ -1,0 +1,7 @@
+# dependencies
+/node_modules
+
+# Ignore environment files in the server folder
+.env
+
+.gitconfig
