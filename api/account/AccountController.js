@@ -21,17 +21,21 @@ async function signup(req, res) {
     const { account, token } = await accountService.login(email, password)
     utilitisService.setAuthCookie(res, token)
 
-    // Send response immediately, don't wait for email
     res.status(201).json({ message: 'Account created and logged in', account })
 
-    // Email after response
+    console.log('webhookUrl:', config.n8n.webhookUrl)
+    console.log('GMAIL_USER:', process.env.GMAIL_USER)
+    console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? 'exists' : 'missing')
+
     if (config.n8n.webhookUrl && config.n8n.webhookUrl.startsWith('http')) {
+      console.log('using n8n')
       fetch(config.n8n.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email })
       }).catch(err => console.error('n8n webhook failed:', err))
     } else {
+      console.log('using nodemailer')
       const nodemailer = require('nodemailer')
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
