@@ -21,7 +21,7 @@ async function signup(req, res) {
     const { account, token } = await accountService.login(email, password)
     utilitisService.setAuthCookie(res, token)
 
-    if (config.n8n.webhookUrl) {
+    if (config.n8n.webhookUrl && config.n8n.webhookUrl.startsWith('http')) {
       // n8n for local development
       fetch(config.n8n.webhookUrl, {
         method: 'POST',
@@ -43,7 +43,7 @@ async function signup(req, res) {
         to: email,
         subject: 'Welcome!',
         text: `Hi ${name}, thanks for signing up!`
-      }).catch(err => console.error('Email failed:', err))
+      }).then(() => console.log('Email sent!')).catch(err => console.error('Email failed:', err.message))
     }
 
     res.status(201).json({ message: 'Account created and logged in', account });
