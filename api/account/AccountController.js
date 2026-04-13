@@ -30,20 +30,25 @@ async function signup(req, res) {
       }).catch(err => console.error('n8n webhook failed:', err))
     } else {
       // Nodemailer for production
-      const nodemailer = require('nodemailer')
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_APP_PASSWORD
-        }
-      })
-      transporter.sendMail({
-        from: process.env.GMAIL_USER,
-        to: email,
-        subject: 'Welcome!',
-        text: `Hi ${name}, thanks for signing up!`
-      }).then(() => console.log('Email sent!')).catch(err => console.error('Email failed:', err.message))
+      try {
+        const nodemailer = require('nodemailer')
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD
+          }
+        })
+        await transporter.sendMail({
+          from: process.env.GMAIL_USER,
+          to: email,
+          subject: 'Welcome!',
+          text: `Hi ${name}, thanks for signing up!`
+        })
+        console.log('Email sent!')
+      } catch (emailErr) {
+        console.error('Email failed:', emailErr.message)
+      }
     }
 
     res.status(201).json({ message: 'Account created and logged in', account });
