@@ -3,14 +3,6 @@ const utilitisService = require('../../services/utilitis.js');
 const config = require('../../config/index.js')
 const nodemailer = require('nodemailer')
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
-  }
-})
-
 module.exports = {
     signup,
     login,
@@ -22,26 +14,6 @@ module.exports = {
     // query,
 }
 
-// async function signup(req, res) {
-//   try {
-//     const { name, email, password } = req.body
-//     await accountService.signup(name, email, password)
-//     const { account, token } = await accountService.login(email, password)
-//     utilitisService.setAuthCookie(res, token)
-//     // n8n welcome email webhook
-//     fetch(config.n8n.webhookUrl, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ name, email })
-//     }).catch(err => console.error('n8n webhook failed:', err))
-//     res.status(201).json({ message: 'Account created and logged in', account });
-//   } catch (error) {
-//     const status = error.status || 500
-//     res.status(status).json({ message: error.message || 'Failed to create account' });
-//   }
-// }
-
-///////////////////////////////////////////////////
 async function signup(req, res) {
   try {
     const { name, email, password } = req.body
@@ -80,7 +52,6 @@ async function signup(req, res) {
     res.status(status).json({ message: error.message || 'Failed to create account' })
   }
 }
-///////////////////////////////////////////////////
 
 async function login(req, res) {
   try {
